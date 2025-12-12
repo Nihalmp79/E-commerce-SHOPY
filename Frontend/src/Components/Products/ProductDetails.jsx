@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
+import { toast } from 'sonner';
+import ProductGrid from './ProductGrid';
 
 
 const selectedProduct = {
@@ -19,7 +21,36 @@ const selectedProduct = {
     altText:"stylish jacket back view"
   }]
 
-}
+};
+
+
+const similarProducts = [
+  {
+    _id: "1",
+    name: "Product 1",
+    price: 100,
+    images: [{ url: "https://picsum.photos/200/200?random=3" }],
+  },
+  {
+    _id: "2",
+    name: "Product 2",
+    price: 150,
+    images: [{ url: "https://picsum.photos/200/200?random=4" }],
+  },
+  {
+    _id: "3",
+    name: "Product 3",
+    price: 200,
+    images: [{ url: "https://picsum.photos/200/200?random=5" }],
+  },
+  {
+    _id: "4",
+    name: "Product 4",
+    price: 250,
+    images: [{ url: "https://picsum.photos/200/200?random=6" }],
+  }
+]
+
 
 function ProductDetails() {
   
@@ -41,6 +72,18 @@ function ProductDetails() {
     if (action === "plus") setQuantity((prev) => prev + 1);
     if (action === "minus" && quantity > 1) setQuantity((prev) => prev - 1);
   }
+  const handleAddToCart = () => {
+    if (!selectedSize || !selectedColor) {
+      toast.error("Please select size and color before adding to cart.",{ duration:4000});
+      return;
+    }
+    setIsButtonDisabled(true);
+
+    setTimeout(() => {
+      toast.success("Product added to cart!", { duration: 1000 });
+      setIsButtonDisabled(false);
+    },500);
+  };
 
 
   return (
@@ -58,7 +101,7 @@ function ProductDetails() {
           {/* Main Image */}
           <div className='md:w-1/2'>
             <div className='mb-4'>
-              <img src={mainImage} alt="Main Product" className='w-full h-auto object-cover rounded-lg ' />
+              <img src={mainImage} alt='Main Product' className='w-full h-auto object-cover rounded-lg ' />
             </div>
           </div>
           {/* Mobile Thumbnail */}
@@ -118,8 +161,8 @@ function ProductDetails() {
                       </button>
                     </div>
                   </div>
-                  <button className='bg-black text-white py-2 px-6 rounded w-full mb-4'>
-                    ADD TO CART
+                  <button disabled={isButtonDisabled} onClick={handleAddToCart} className={`bg-black text-white py-2 px-6 rounded w-full mb-4 ${isButtonDisabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-900'}`}>
+                    {isButtonDisabled ? "Adding..." : "ADD TO CART"}
                   </button>
 
                   <div className='mt-10 text-gray-700'>
@@ -139,6 +182,12 @@ function ProductDetails() {
                   </div>
           </div>
 
+        </div>
+        <div className='mt-20'>
+          <h2 className='text-2xl text-center font-medium mb-4'>
+            You May  Also Like
+          </h2>
+          <ProductGrid products={similarProducts}/>
         </div>
       </div>
     </div>
