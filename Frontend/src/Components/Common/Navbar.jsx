@@ -26,7 +26,7 @@ function Navbar() {
         </div>
         {/* center - Navigation Link */}
         <div className='hidden md:flex space-x-6'>
-            <Link to='#' className='text-gray-700 hover:text-black text-sm font-medium uppercase'>
+            <Link to='/collection/all' className='text-gray-700 hover:text-black text-sm font-medium uppercase'>
                 Men
             </Link>
             <Link to='#' className='text-gray-700 hover:text-black text-sm font-medium uppercase'>
@@ -71,7 +71,7 @@ function Navbar() {
         <div className='p-4 '>
             <h2 className='text-xl font-semibold mb-4'>Menu</h2>
             <nav className='space-y-4'>
-                <Link to="#" onClick={toggleNavDrawer} className='block text-gray-600 hover:text-black'>
+                <Link to="/collection/all" onClick={toggleNavDrawer} className='block text-gray-600 hover:text-black'>
                     Men
                 </Link>
                 <Link to="#" onClick={toggleNavDrawer} className='block text-gray-600 hover:text-black'>
