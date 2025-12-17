@@ -9,6 +9,9 @@ import Profile from './Pages/Profile';
 import CollectionPage from './Pages/CollectionPage';
 import ProductDetails from './Components/Products/ProductDetails';
 import Checkout from './Components/Cart/Checkout';
+import OrderConfirmationPage from './Pages/OrderConfirmationPage';
+import OrderDetailsPage from './Pages/OrderDetailsPage';
+import MyOrderPage from './Pages/MyOrderPage';
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
           <Route path='collection/:collection' element={<CollectionPage/>}/>
           <Route path='product/:id' element={<ProductDetails/>} />
           <Route path='checkout' element={<Checkout/>}/>
+          <Route path='order-confirmation' element={<OrderConfirmationPage/>}/>
+          <Route path='order/:id' element={<OrderDetailsPage/>}/>
+          <Route path='my-orders' element={<MyOrderPage/>}/>
         </Route>
       </Routes>
       </BrowserRouter>
