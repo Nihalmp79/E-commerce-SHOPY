@@ -17,6 +17,7 @@ import AdminHomePage from './Pages/AdminHomePage';
 import UserManagement from './Components/Admin/UserManagement';
 import ProductManagement from './Components/Admin/ProductManagement';
 import EditProductPage from './Components/Admin/EditProductPage';
+import OrderManagement from './Components/Admin/OrderManagement';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path='users' element={<UserManagement/>}/>
           <Route path='products' element={<ProductManagement/>}/>
           <Route path='products/:id/edit' element={<EditProductPage/>}/>
+          <Route path='orders' element={<OrderManagement/>}/>
 
         </Route>
       </Routes>
