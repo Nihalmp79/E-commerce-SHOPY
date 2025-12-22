@@ -4,6 +4,7 @@ const UserManagement = () => {
 
     const users = [
         {
+            _id: 123123,
             name: 'Nihal MP',
             email: "nihu@gmail.com",
             role:"admin",
@@ -39,6 +40,13 @@ const UserManagement = () => {
 
     const handleRolChange = (userId, newRole) => {
         console.log({id: userId, role:newRole});
+    }
+
+    const handleDeleteUser = (userId) => {
+        if(window.confirm("Are you sure you want to delete this user?")){
+            console.log("deleting user with ID",userId);
+            
+        }
     }
 
 
@@ -86,17 +94,22 @@ const UserManagement = () => {
             </thead>
             <tbody>
                 {users.map((user) => (
-                    <tr key={user.id} className='border-b hover:bg-gray-50'>
+                    <tr key={user._id} className='border-b hover:bg-gray-50'>
                         <td className="p-4 font-medium text-gray-900 whitespace-nowrap">
                             {user.name}
                         </td>
                         <td className="p-4">{user.email}</td>
                         <td className="p-4">
                             <select value={user.role} onChange={(e) => handleRolChange(user._id, e.target.value)} className="p-2 border rounded">
-                                <option value="customer"></option>
+                                <option value="customer">Customer</option>
+                                <option value="customer">Admin</option>
                             </select>
                         </td>
-                        <td className="p-4">{user.email}</td>
+                        <td className="p-4">
+                            <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" onClick={() => handleDeleteUser(user._id)}>
+                                Delete
+                            </button>
+                        </td>
                     </tr>
                 ))}
             </tbody>
