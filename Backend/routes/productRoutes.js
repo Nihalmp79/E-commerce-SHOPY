@@ -237,7 +237,89 @@ router.get("/", async (req, res) => {
         res.status(500).send("Server Error");
         
     }
+});
+
+// @route GET / api/products/new-arrivals
+// @desc retrive the latest 8 products - Creating Date
+// @access Public
+router.get("/new-arrivals", async (req, res) =>{
+    try {   
+        // Fetch Latest 8 products
+        const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(8);
+        res.json(newArrivals);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+        
+    }
 })
+
+
+// @route GET /api/products/best-seller
+// @desc retrive the product with highest rating
+// @access Public
+
+router.get("/best-seller", async (req, res) => {
+    try {
+        const bestSeller = await Product.findOne().sort({ rating: -1 });
+        if(bestSeller){
+            res.json(bestSeller);
+        } else {
+            res.status(404).json({ message: "No best seller found"});
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+    }
+})
+
+
+// @route GET /api/products/:id
+// @desc get a single product bt ID
+// @access public
+router.get("/:id", async (req, res) => {
+    try{
+        const product = await Product.findById(req.params.id);
+        if(product){
+            res.json(product);
+        } else {
+            res.status(404).json({message: "Product Not Found"});
+        } 
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error")
+        
+    }
+});
+
+
+// @route GET /api/product/similar/id
+// @desc retrive similar products based on the current products gender and category
+// @access Public
+
+router.get("/similar/:id", async (req, res) =>{
+
+    try {
+        const product = await Product.findById(req.params.id);
+
+        if(!product){
+            return res.status(404).json({ message: " Product not found"});
+        }
+
+        const similarProducts = await Product.find({
+            _id: {$ne: product._id}, //Exclude the current product Id
+            gender: product.gender,
+            category: product.category,
+        }).limit(4);
+
+
+        res.json(similarProducts);
+    } catch (error ) {
+        console.error(error);
+        res.status(500).send("Server Error");
+    }
+});
+
 
 
 
