@@ -100,14 +100,16 @@ router.post("/:id/finalize", protect, async (req, res) => {
             totalPrice: checkout.totalPrice,
             isPaid: true,
             paidAt: checkout.paidAt,
-            isDelivered: false,
             paymentStatus: "paid",
+            isDelivered: false,
             paymentDetails: checkout.paymentDetails,
         });
 
         checkout.isFinalized = true;
         checkout.finalizedAt = Date.now();
         await checkout.save();
+
+        // await Checkout.findByIdAndDelete(req.params.id);
 
         await Cart.findOneAndDelete({ user: checkout.user });
 
