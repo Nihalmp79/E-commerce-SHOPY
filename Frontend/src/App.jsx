@@ -19,9 +19,12 @@ import ProductManagement from './Components/Admin/ProductManagement';
 import EditProductPage from './Components/Admin/EditProductPage';
 import OrderManagement from './Components/Admin/OrderManagement';
 
+
+
 function App() {
   return (
     <div>
+   
       <BrowserRouter>
       <Toaster position='top-right'/>
       <Routes>
@@ -48,7 +51,8 @@ function App() {
         </Route>
       </Routes>
       </BrowserRouter>
-    </div>
+
+   </div>
   )
 }
 
