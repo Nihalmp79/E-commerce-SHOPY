@@ -156,88 +156,7 @@ router.delete("/:id", protect, admin, async (req, res) => {
     }
 });
 
-// @route Get / api / products
-// @desc get all products with optional qury filters
-// @access Public
 
-router.get("/", async (req, res) => {
-    try{
-        const { collection , size,colors , gender, minPrice, maxPrice, sortBy, search, category, material, brand, limit} = req.query;
-
-        let query = {};
-
-        // filter logic
-        if(collection && collection.toLocaleLowerCase() !== "all"){
-            query.collection = collection;
-        }
-
-        if(category && category.toLocaleLowerCase() !== "all"){
-            query.category = category;
-        }
-
-        if(material){
-            query.material = {$in: material.split(",")};    
-        }
-
-        if(brand){
-            query.brand = {$in: brand.split(",")};    
-        }
-
-        if(size){
-            query.sizes = {$in: size.split(",")};    
-        }
-
-        if(colors){
-            query.colors = {$in: [colors]};    
-        }
-
-        if(gender){
-            query.gender = gender;
-        }
-
-        if(minPrice || maxPrice){
-            query.price ={};
-            if(minPrice) query.price.$gte = Number(minPrice);
-            if(maxPrice) query.price.$lte = Number(maxPrice);
-        }
-
-        if(search){
-            query.$or = [
-                {name: {$regex: search, $options:"i"}},
-                {description: {$regex: search, $options:"i"}}
-            ]
-        }
-        // sort Logic
-
-        let sort = {};
-
-        if(sortBy){
-            switch (sortBy){
-              case "priceAsc":
-                sort = { price: 1};
-                break;
-              case "priceDesc":
-                sort = { price: -1};
-                break;
-              case "popularity":
-                sort = { rating: -1};
-                break;
-              default:
-                break;
-            }
-        }
-
-
-        // Fetch products and apple sorting and limit
-        let products = await Product.find(query).sort(sort).limit(Number(limit) || 0);
-        res.json(products);
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server Error");
-        
-    }
-});
 
 // @route GET / api/products/new-arrivals
 // @desc retrive the latest 8 products - Creating Date
@@ -317,6 +236,90 @@ router.get("/similar/:id", async (req, res) =>{
     } catch (error ) {
         console.error(error);
         res.status(500).send("Server Error");
+    }
+});
+
+// @route Get / api / products
+// @desc get all products with optional qury filters
+// @access Public
+
+router.get("/", async (req, res) => {
+    try{
+        const { collection , size,colors , gender, minPrice, maxPrice, sortBy, search, category, material, brand, limit} = req.query;
+
+        let query = {};
+
+        // filter logic
+        if(collection && collection.toLocaleLowerCase() !== "all"){
+            query.collections = { $regex: `^${collection}$`, $options: 'i' };
+        }
+
+        if(category && category.toLocaleLowerCase() !== "all"){
+            query.category = { $regex: `^${category}$`, $options: 'i'};
+        }
+
+        if(material){
+            query.material = {$in: material.split(",")};    
+        }
+
+        if(brand){
+            query.brand = {$in: brand.split(",")};    
+        }
+
+        if(size){
+            query.sizes = {$in: size.split(",")};    
+        }
+
+        if(colors){
+            const colorArray = colors.split(",").map(c => c.trim());
+            query.colors = { $in: colorArray };   
+        }
+
+        if(gender){
+            query.gender = gender;
+        }
+
+        if(minPrice || maxPrice){
+            query.price ={};
+            if(minPrice) query.price.$gte = Number(minPrice);
+            if(maxPrice) query.price.$lte = Number(maxPrice);
+        }
+
+        if(search){
+            query.$or = [
+                {name: {$regex: search, $options:"i"}},
+                {description: {$regex: search, $options:"i"}}
+            ]
+        }
+        // sort Logic
+
+        let sort = {};
+
+        if(sortBy){
+            switch (sortBy){
+              case "priceAsc":
+                sort = { price: 1};
+                break;
+              case "priceDesc":
+                sort = { price: -1};
+                break;
+              case "popularity":
+                sort = { rating: -1};
+                break;
+              default:
+                break;
+            }
+        }
+
+
+        // Fetch products and apple sorting and limit
+        let products = await Product.find(query).sort(sort).limit(Number(limit) || 0);
+        res.json(products);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Server Error");
+        
     }
 });
 

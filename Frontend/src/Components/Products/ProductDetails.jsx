@@ -2,63 +2,42 @@ import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { toast } from 'sonner';
 import ProductGrid from './ProductGrid';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import {fetchProductDetails} from "../../redux/slices/productSlice"
+import { fetchSimilarProducts } from '../../redux/slices/productSlice';
+import { addToCart } from '../../redux/slices/cartSlice';
 
 
-const selectedProduct = {
-  name: "Stylish Jacket",
-  price: 120,
-  originalPrice: 150,
-  description: "A stylish jacket perfect for all seasons.",
-  brand: "FashionCo",
-  material: "Leather",
-  sizes: ["S", "M", "L", "XL"],
-  colors: ["Black", "Brown", "Red"],
-  images:[{
-    url:"https://picsum.photos/500/500?random=1",
-    altText:"stylish jacket front view"
-  },{
-    url:"https://picsum.photos/500/500?random=2",
-    altText:"stylish jacket back view"
-  }]
-
-};
 
 
-const similarProducts = [
-  {
-    _id: "1",
-    name: "Product 1",
-    price: 100,
-    images: [{ url: "https://picsum.photos/200/200?random=3" }],
-  },
-  {
-    _id: "2",
-    name: "Product 2",
-    price: 150,
-    images: [{ url: "https://picsum.photos/200/200?random=4" }],
-  },
-  {
-    _id: "3",
-    name: "Product 3",
-    price: 200,
-    images: [{ url: "https://picsum.photos/200/200?random=5" }],
-  },
-  {
-    _id: "4",
-    name: "Product 4",
-    price: 250,
-    images: [{ url: "https://picsum.photos/200/200?random=6" }],
-  }
-]
 
+const ProductDetails = ({productId}) => {
 
-function ProductDetails() {
-  
+  const {id} = useParams();
+  const dispatch = useDispatch();
+  const {selectedProduct, loading,error,similarProducts} = useSelector((state) => state.products);
+  const {user, guestId} = useSelector((state) => state.auth);
   const [mainImage, setMainImage] = useState('');
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+
+  
+
+
+
+  const productFetchId = productId || id;
+
+
+  useEffect(() => {
+    if(productFetchId){
+      dispatch(fetchProductDetails(productFetchId));
+      dispatch(fetchSimilarProducts({id : productFetchId}))
+    }
+  },[dispatch,productFetchId]);
 
 
   useEffect(() => {
@@ -79,15 +58,38 @@ function ProductDetails() {
     }
     setIsButtonDisabled(true);
 
-    setTimeout(() => {
-      toast.success("Product added to cart!", { duration: 1000 });
+    dispatch(
+      addToCart({
+        productId: productFetchId,
+        quantity,
+        size: selectedSize,
+        color: selectedColor,
+        guestId,
+        userId: user?._id,
+      })
+    )
+    .then(() => {
+      toast.success("Product added to cart!", {
+        duration: 1000,
+      });
+    })
+    .finally(() => {
       setIsButtonDisabled(false);
-    },500);
+    })
   };
+
+  if(loading){
+    return <p>Loading ...</p>
+  }
+
+  if(error) {
+    return <p>Error: {error}</p>
+  }
 
 
   return (
     <div className='p-6'>
+      {selectedProduct &&(
       <div className='max-w-6xl mx-auto bg-white p-8 rounded-lg'>
         <div className='flex flex-col md:flex-row'>
           {/* left Thumbnails */}
@@ -187,9 +189,10 @@ function ProductDetails() {
           <h2 className='text-2xl text-center font-medium mb-4'>
             You May  Also Like
           </h2>
-          <ProductGrid products={similarProducts}/>
+          <ProductGrid products={similarProducts} loading={loading} error={error}/>
         </div>
       </div>
+      )}
     </div>
   )
 }

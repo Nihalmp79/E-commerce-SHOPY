@@ -1,6 +1,7 @@
 import React, { useEffect, useRef , useState } from 'react'
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const NewArrivals = () => {
 
@@ -12,101 +13,30 @@ const NewArrivals = () => {
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
 
-    const NewArrivals = [
-        {
-            _id: '1',
-            name: 'Stylish Jacket',
-            price: 79.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=1",
-                    altText: "Stylish Jacket"
-                },
-            ],
-        },
-        {
-            _id: '2',
-            name: 'Stylish Pants',
-            price: 59.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=2",
-                    altText: "Stylish Pants"
-                },
-            ],
-        },
-        {
-            _id: '3',
-            name: 'Stylish Shirt',
-            price: 39.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=3",
-                    altText: "Stylish Shirt"
-                },
-            ],
-        },
-        {
-            _id: '4',
-            name: 'Stylish jeans',
-            price: 49.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=4",
-                    altText: "Stylish jeans"
-                },
-            ],
-        },
-        {
-            _id: '5',
-            name: 'casual shirt',
-            price: 29.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=5",
-                    altText: "casual shirt"
-                },
-            ],
-        },
-        {
-            _id: '6',
-            name: 'casual pants',
-            price: 49.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=6",
-                    altText: "casual pants"
-                },
-            ],
-        },
-        {
-            _id: '7',
-            name: 'Stylish Jacket',
-            price: 79.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=7",
-                    altText: "Stylish Jacket"
-                },
-            ],
-        },
-        {
-            _id: '8',
-            name: 'Stylish Jacket',
-            price: 79.99,
-            image: [
-                {
-                    url: "https://picsum.photos/500/500?random=8",
-                    altText: "Stylish Jacket"
-                },
-            ],
-        },
-    ];
+    const [newArrivals, setNewArrivals] = useState([]);
+    
+    useEffect(() => {
+        const fetchNewArrivals = async () =>{
+            try {
+                const {data} = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`);
+                console.log("NEW ARRIVALS DATA:", data);
+                console.log("BACKEND URL:", import.meta.env.VITE_BACKEND_URL);
+
+                setNewArrivals(
+                    Array.isArray(data) ? data : data.products || []
+            );
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        fetchNewArrivals();
+    },[]);
 
 
 
     const handleMouseDown = (e) => {
-        e.prevenetDefault();
+        e.preventDefault();
         setIsDragging(true);
         setStartX(e.pageX);
         setScrollLeft(scrollRef.current.scrollLeft);
@@ -154,7 +84,7 @@ const NewArrivals = () => {
             updateScrollButtons();
             return () => container.removeEventListener("scroll",updateScrollButtons);
         }
-    }, []);
+    }, [newArrivals]);
 
   return (
     <section className='py-16 px-4 lg:px-0'>
@@ -177,11 +107,17 @@ const NewArrivals = () => {
             </div>
         </div>
         {/* Scrollable Contet */}
-        <div ref={scrollRef} className={`container mx-auto overflow-x-scroll flex space-x-6 relative ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUpOrLeave} onMouseLeave={handleMouseUpOrLeave} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} onScroll={updateScrollButtons}>
+        <div ref={scrollRef} className={`w-full overflow-x-auto flex gap-4 px-4 ${isDragging ? "cursor-grabbing" : "cursor-grab"}`} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUpOrLeave} onMouseLeave={handleMouseUpOrLeave} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} onScroll={updateScrollButtons}>
             {
-              NewArrivals.map((product) => (
-                <div key={product._id} className='min-w-[80%] sm:min-w-[40%] lg:min-w-[20%] relative'>
-                    <img src={product.image[0]?.url} alt={product.image[0]?.altText || product.name} className='w-full h-[350px] object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg' draggable={false}/>
+              newArrivals.map((product) => (
+                <div key={product._id} className='flex-shrink-0 w-56 sm:w-64 lg:w-72 relative'>
+                    <img
+                    src={product.images?.[0]?.url || "/placeholder.jpg"}
+                    alt={product.images?.[0]?.altText || product.name}
+                    className="w-full h-[350px] object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
+                    draggable={false}
+                    />
+
                     <div className='absolute bottom-0 left-0 right-0  backdrop-blur-md text-white p-4 rounded-b-lg'>
                         <Link to={`/product/${product._id}`} className='block' >
                             <h4 className='font-medium'>
