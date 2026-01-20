@@ -66,6 +66,7 @@ const ProductDetails = ({productId}) => {
         color: selectedColor,
         guestId,
         userId: user?._id,
+        images: selectedProduct.images,
       })
     )
     .then(() => {

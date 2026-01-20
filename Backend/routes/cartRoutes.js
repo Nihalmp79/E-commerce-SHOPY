@@ -46,7 +46,7 @@ router.post("/", async (req, res) => {
                 cart.products.push({
                     productId,
                     name: product.name,
-                    image: product.images[0],
+                    image: product.images[0].url,
                     price: product.price,
                     size,
                     color,
@@ -66,7 +66,7 @@ router.post("/", async (req, res) => {
                 products: [{
                     productId,
                     name: product.name,
-                    image: product.images[0],
+                    image: product.images[0].url,
                     price: product.price,
                     size,
                     color,

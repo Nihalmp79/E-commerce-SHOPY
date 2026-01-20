@@ -36,7 +36,8 @@ const handleRemoveFromCart = (productId, size, color) => {
         cart.products.map((product,index) => (
             <div key={index} className='flex items-center justify-between py-4 border-b'>
                 <div className='flex items-start'>
-                    <img src={product.images} alt={product.name} className='w-20 h-24 object-cover mr-4 rounded' />
+                    <img src={product.image}
+                         alt={product.name} className='w-20 h-24 object-cover mr-4 rounded' />
                     <div>
                         <h3>{product.name}</h3>
                         <p className='text-sm text-gray-500'>

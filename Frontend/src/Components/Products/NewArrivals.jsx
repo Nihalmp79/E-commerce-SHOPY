@@ -19,8 +19,6 @@ const NewArrivals = () => {
         const fetchNewArrivals = async () =>{
             try {
                 const {data} = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`);
-                console.log("NEW ARRIVALS DATA:", data);
-                console.log("BACKEND URL:", import.meta.env.VITE_BACKEND_URL);
 
                 setNewArrivals(
                     Array.isArray(data) ? data : data.products || []
