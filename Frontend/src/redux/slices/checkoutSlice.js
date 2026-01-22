@@ -3,8 +3,10 @@ import axios from "axios";
 
 
 // async thunk to create a checkout session 
-export const createCheckout = createAsyncThunk("checkout/createCheckout", async ({checkoutdata} , {rejectWithValue}) => {
+export const createCheckout = createAsyncThunk("checkout/createCheckout", async (payload , {rejectWithValue}) => {
     try {
+        const checkoutdata = payload;
+        console.log("sending:", checkoutdata);
         const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/checkout`, checkoutdata,
             {
                 headers:{
@@ -12,8 +14,10 @@ export const createCheckout = createAsyncThunk("checkout/createCheckout", async 
                 },
             }
         );
+        console.log("Success:" , response.data);
         return response.data
     } catch (error) {
+        console.error("Error: ", error.response?.status, error.response?.data);
         return rejectWithValue(error.response.data);
     }
 });

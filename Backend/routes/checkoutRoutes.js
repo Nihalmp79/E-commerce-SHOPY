@@ -12,32 +12,35 @@ const router = express.Router();
 // @desc Create a new checkout
 // @access Private
 
-router.post("/", protect, async (req, res) =>{
-    const {checkoutItems, shippingAddress, paymentMethod, totalPrice} = req.body;
+router.post("/", protect, async (req, res) => {
+    try {
+        console.log("Received:", req.body); 
+        
+        const data = req.body || {};
+        const {checkoutItems, shippingAddress, paymentMethod, totalPrice} = data;
 
-    if(!checkoutItems || checkoutItems.length ===0){
-        return res.status(400).json({message: "No items to checkout"});
-    }
 
-    try{
-        // Create a new checkout session
+        if(!checkoutItems){
+            return res.status(400).json({message: "No items to checkout"});
+        }
+
         const newCheckout = await Checkout.create({
             user: req.user._id,
             checkoutItems: checkoutItems,
             shippingAddress,
             paymentMethod,
             totalPrice,
-            paymentstatus: "pending",
+            paymentStatus: "pending",
             isPaid: false,
+            isFinalized: false
         });
-        console.log(`Checkout created for user: ${req.user._id}`);
+        
+        console.log(`Checkout created: ${newCheckout._id}`);
         res.status(201).json(newCheckout);
     } catch (error){
-        console.error("Error Creating checkout session:", error);
-        res.status(500).json({message: "Server Error"});
-        
+        console.error("Checkout error:", error);
+        res.status(500).json({message: error.message});
     }
-
 });
 
 

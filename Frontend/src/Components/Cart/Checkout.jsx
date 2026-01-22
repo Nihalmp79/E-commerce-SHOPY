@@ -36,25 +36,31 @@ const Checkout = () => {
 
 
 
-    const handleCreateCheckout = async (e) =>{
+    const handleCreateCheckout = (e) => {
         e.preventDefault();
-        if(cart && cart.products.length > 0){
-            const res = await dispatch(createCheckout({
-                checkoutItems: cart.products,
-                shippingAddress,
-                paymentMethod: "Paypal",
-                totalPrice: cart.totalPrice,
-            }));
-            if(res.payload && res.payload._id){
-                setCheckoutId(res.payload._id); //Set checkout ID if check was successful
-            }
+        
+        // Stop if no cart items
+        if(!cart?.products?.length) {
+            alert("Cart is empty! Add products first.");
+            return;
         }
+        
+        dispatch(createCheckout({
+            checkoutItems: cart.products,
+            shippingAddress,
+            paymentMethod: "Paypal",
+            totalPrice: cart.totalPrice,
+        })).then((result) => {
+            if(result.payload?._id) {
+                setCheckoutId(result.payload._id);
+            }
+        });
+    };
 
-    }
 
     const handlePaymentSuccess = async (details) =>{
         try{
-            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/checkout/pay`,
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
                 {paymentStatus: "paid", paymentDetails: details},
                 {
                     headers:{
@@ -77,7 +83,7 @@ const Checkout = () => {
     const handleFinalizeCheckout = async (checkoutId) => {
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finilize`,
+                `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finalize`,
                 {
                     headers: {
                         Authorization:`Bearer ${localStorage.getItem("userToken")}`

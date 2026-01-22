@@ -21,8 +21,12 @@ const protect = async (req, res,next) => {
             }
         } else {
             res.status(401).json({message: "Not authorized, no token provided"});
+            
         }
 };
+
+
+
 
 
 // middleware to check if the user is an admin
